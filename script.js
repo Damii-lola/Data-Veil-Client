@@ -13,10 +13,8 @@ function setStatus(msg, isError = false) {
 }
 
 async function callApi(endpoint, body) {
-  // Clear old status
   setStatus('Contacting server...');
 
-  // Show what we're about to send (for debugging)
   console.log(`📤 Sending to ${API_BASE}${endpoint}:`, body);
 
   try {
@@ -26,26 +24,40 @@ async function callApi(endpoint, body) {
       body: JSON.stringify(body)
     });
 
-    // Log the raw response status
     console.log(`📥 Response status: ${res.status}`);
 
-    // Try to parse JSON, but handle non‑JSON responses gracefully
     let data;
     try {
       data = await res.json();
     } catch (parseError) {
-      // If the server returned pure text or HTML
       const rawText = await res.text();
       console.error('❌ Response is not JSON:', rawText);
       throw new Error(`Server returned non‑JSON (status ${res.status}). Check backend logs.`);
     }
 
     if (!res.ok) {
-      // The server sent a JSON error object
       throw new Error(data.error || `Request failed with status ${res.status}`);
     }
 
-    outputText.value = data.result;
+    // --- Success ---
+    if (endpoint === '/api/encrypt') {
+      outputText.value = data.result;
+
+      // Step 2: Show table key and step‑by‑step breakdown in console
+      console.log('🔑 Table Key:', data.tableKey);
+      console.log(`✅ Encryption successful – ${data.steps.length} character(s)`);
+      console.table(data.steps.map(s => ({
+        Character: s.character,
+        '9‑Digit Code': s.code,
+        'First 3': s.first3,
+        'Next 2': s.next2,
+        'Last 4': s.last4
+      })));
+    } else {
+      // Decrypt – just shows the result in the output box
+      outputText.value = data.result;
+    }
+
     setStatus('Success');
   } catch (err) {
     console.error('❌ Request error:', err);
