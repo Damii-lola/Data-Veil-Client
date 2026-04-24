@@ -1,4 +1,4 @@
-const API_BASE = 'https://data-veil-api.onrender.com';
+const API_BASE = 'https://data-veil-api.onrender.com'; // your Render URL
 
 const inputText = document.getElementById('inputText');
 const outputText = document.getElementById('outputText');
@@ -13,13 +13,15 @@ function setStatus(msg, isError=false) {
 
 async function callApi(endpoint, body) {
   setStatus('Contacting server...');
-  console.log(`📤 ${API_BASE}${endpoint}`, body);
+  console.log(`📤 Sending to ${API_BASE}${endpoint}:`, body);
 
   try {
     const res = await fetch(API_BASE + endpoint, {
-      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(body)
     });
-    console.log(`📥 status: ${res.status}`);
+    console.log(`📥 Response status: ${res.status}`);
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || `Status ${res.status}`);
 
@@ -27,32 +29,33 @@ async function callApi(endpoint, body) {
       outputText.value = data.result;
       console.log('🔑 Table Key:', data.tableKey);
       console.log(`✅ Encrypted ${data.steps.length} character(s)`);
-      // Build a table showing every step
-      const tableRows = data.steps.map(s => ({
+
+      // Build a simplified console.table with key steps
+      const rows = data.steps.map(s => ({
         Char: s.character,
-        '9-digit': s.code,
-        'First3': s.first3,
-        'Next2': s.next2,
-        'Last4': s.last4,
-        'Step3 carry': s.step3.carry,
-        'Step4 result': s.step4.result,
-        'Set1': s.step5.set1.join(', '),
-        'Set2': s.step5.set2.join(', '),
-        'Diffs': s.step5.diffs.join(', '),
-        'Scramble Sum': s.step5.scrambleSum,
-        'Step6 Quotient': s.step6.quotient,
-        'Base5': s.step7.base5Str,
-        'Base5 as dec': s.step7.base5AsDecimal,
-        'Step7 product': s.step7.product
+        '1st3': s.first3,
+        'mid2': s.next2,
+        'last4': s.last4,
+        'carry': s.step3.carry,
+        'step4': s.step4.step4res,
+        'scramble': s.step5.scrambleSum,
+        'step6': s.step6.quotient,
+        'base5': s.step7.base5Str,
+        'sumBase5': s.step8.sumBase5,
+        'chainFinal': s.step8.chainFinal,
+        'weaved': s.step9.weaved,
+        'hex': s.step10.hex,
+        'wrapped': s.step11.wrapped,
+        'finalSwapped': s.step12.final
       }));
-      console.table(tableRows);
+      console.table(rows);
     } else {
       outputText.value = data.result;
       console.log('✅ Decrypted');
     }
     setStatus('Success');
   } catch (err) {
-    console.error('❌', err);
+    console.error('❌ Request error:', err);
     setStatus(`Error: ${err.message}`, true);
     outputText.value = '';
   }
@@ -60,12 +63,12 @@ async function callApi(endpoint, body) {
 
 encryptBtn.addEventListener('click', () => {
   const text = inputText.value.trim();
-  if (!text) { setStatus('Enter text', true); return; }
+  if (!text) { setStatus('Please enter some text', true); return; }
   callApi('/api/encrypt', { text });
 });
 
 decryptBtn.addEventListener('click', () => {
   const ciphertext = inputText.value.trim();
-  if (!ciphertext || ciphertext.length%9!==0) { setStatus('Invalid ciphertext', true); return; }
+  if (!ciphertext || ciphertext.length%9!==0) { setStatus('Ciphertext must be digits, multiple of 9', true); return; }
   callApi('/api/decrypt', { ciphertext });
 });
