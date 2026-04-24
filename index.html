@@ -2,18 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Custom Cipher</title>
+  <title>Custom Cipher – Debug View</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <h1>Custom Cipher</h1>
-    <textarea id="inputText" rows="5" placeholder="Paste your text here..."></textarea>
+    <textarea id="inputText" rows="4" placeholder="Paste your text here..."></textarea>
     <div class="buttons">
       <button id="encryptBtn">Encrypt</button>
-      <button id="decryptBtn">Decrypt</button>
+      <button id="decryptBtn" disabled title="Decrypt not yet updated for new cipher">Decrypt (old)</button>
     </div>
-    <textarea id="outputText" rows="5" readonly placeholder="Result will appear here..."></textarea>
+    <textarea id="outputText" rows="4" readonly placeholder="Final encrypted output..."></textarea>
+    <div class="working-area">
+      <h2>🔧 Working Area</h2>
+      <textarea id="workingArea" rows="20" readonly placeholder="Step‑by‑step details will appear here..."></textarea>
+    </div>
     <p id="status"></p>
   </div>
   <script src="script.js"></script>
