@@ -1,19 +1,27 @@
-const API_BASE = 'https://data-veil-api.onrender.com';   // your Render backend
+const API_BASE = 'https://data-veil-api.onrender.com';   // <-- YOUR RENDER URL
 
 const inputText = document.getElementById('inputText');
 const outputText = document.getElementById('outputText');
+const workingArea = document.getElementById('workingArea');
 const encryptBtn = document.getElementById('encryptBtn');
 const decryptBtn = document.getElementById('decryptBtn');
 const statusEl = document.getElementById('status');
 
 function setStatus(msg, isError = false) {
   statusEl.textContent = msg;
-  statusEl.style.color = isError ? 'red' : 'gray';
+  statusEl.style.color = isError ? '#ff6b6b' : '#aaa';
+}
+
+// Display step details in the Working Area
+function printToWorkingArea(text) {
+  workingArea.value += text + '\n';
+  workingArea.scrollTop = workingArea.scrollHeight;
 }
 
 async function callApi(endpoint, body) {
+  workingArea.value = '';  // clear working area
   setStatus('Contacting server...');
-  console.log(`📤 Sending to ${API_BASE}${endpoint}:`, body);
+  printToWorkingArea(`📤 Sending to ${API_BASE}${endpoint}: ${JSON.stringify(body)}`);
 
   try {
     const res = await fetch(API_BASE + endpoint, {
@@ -22,84 +30,75 @@ async function callApi(endpoint, body) {
       body: JSON.stringify(body)
     });
 
-    console.log(`📥 Response status: ${res.status}`);
+    printToWorkingArea(`📥 Response status: ${res.status}`);
 
-    // Parse JSON (if possible)
     let data;
     try {
       data = await res.json();
     } catch {
       const rawText = await res.text();
-      console.error('❌ Response is not JSON:', rawText);
-      throw new Error(`Server returned non‑JSON (status ${res.status}). Check backend logs.`);
+      printToWorkingArea(`❌ Non-JSON response: ${rawText}`);
+      throw new Error(`Server returned non‑JSON (status ${res.status})`);
     }
 
     if (!res.ok) {
-      // Use the error message from the server, if present
-      throw new Error(data.error || `Request failed with status ${res.status}`);
+      printToWorkingArea(`❌ Server error: ${data.error || 'Unknown'}`);
+      throw new Error(data.error || `Status ${res.status}`);
     }
 
-    // ---- Success ----
+    // ---- Encryption success ----
     if (endpoint === '/api/encrypt') {
-      // Show the final encrypted hex in the output box
       outputText.value = data.result;
+      printToWorkingArea(`🔑 Table Key: ${data.tableKey}`);
+      printToWorkingArea(`✅ Encryption complete – ${data.steps.length} character(s)\n`);
 
-      // Log the table key and steps for debugging
-      console.log('🔑 Table Key:', data.tableKey);
-      console.log(`✅ Encryption complete – ${data.steps.length} character(s)`);
+      // Print each character's step‑by‑step
+      data.steps.forEach((s, idx) => {
+        printToWorkingArea(`\n--- Character #${idx+1}: '${s.character}' ---`);
+        printToWorkingArea(`  9‑Digit Code: ${s.code}`);
+        printToWorkingArea(`  First 3: ${s.first3}   Next 2: ${s.next2}   Last 4: ${s.last4}`);
+        printToWorkingArea(`  Step3: a=${s.step3.a} b=${s.step3.b} c=${s.step3.c}   a+b=${s.step3.sum_ab}   (a+b)*c=${s.step3.prod}   a+b+c=${s.step3.sum_abc}`);
+        printToWorkingArea(`         prod%sum_abc=${s.step3.mod1}   sum_abc%prod=${s.step3.mod2}   carry=${s.step3.carry}`);
+        printToWorkingArea(`  Step4: carry * mid2 = ${s.step3.carry} * ${s.step4.midVal} = ${s.step4.step4res}`);
+        printToWorkingArea(`  Step5: Set1=[${s.step5.set1}] Set2=[${s.step5.set2}]  Diffs=[${s.step5.diffs}]  Sum=${s.step5.scrambleSum}`);
+        printToWorkingArea(`  Step6: ${s.step5.scrambleSum} ÷ ${s.step4.step4res} = ${s.step6.quotient} (drop decimal)`);
+        printToWorkingArea(`  Step7: base5(${s.step6.quotient})='${s.step7.base5Str}' → treat as decimal ${s.step7.base5AsDecimal} × ${s.first3} = ${s.step7.product}`);
+        printToWorkingArea(`  Step8: sumDigits(base5)=${s.step8.sumBase5} -> chain: divisor1=${s.step8.divisor1} mod1=${s.step8.mod1_8} div1_8=${s.step8.div1_8} mod2=${s.step8.mod2_8} div2_8=${s.step8.div2_8} divisor2=${s.step8.divisor2} mod3=${s.step8.mod3_8}  chainSum=${s.step8.chainSum} chainFinal=${s.step8.chainFinal}`);
+        printToWorkingArea(`  Step9: weave(start=${s.step8.divisor1}, ${s.step8.chainFinal}, ${s.step8.div2_8}) = ${s.step9.weaved}`);
+        printToWorkingArea(`  Step10: weaved→base5: ${s.step10.base5_2} → treat as dec→base7: ${s.step10.base7} → treat as dec→hex: ${s.step10.hex}`);
+        printToWorkingArea(`  Step11: sig=${s.step11.sig}   wrapped: ${s.step11.wrapped}`);
+        printToWorkingArea(`  Step12: first4=${s.step12.first4} last4=${s.step12.last4part}   swapped: ${s.step12.swapped}`);
+        printToWorkingArea(`  Step13: '0x${s.step12.swapped}' as hex → base10: ${s.step13.base10.slice(0,40)}…`);
+        printToWorkingArea(`  Step14: base10 → base4: ${s.step14.base4.slice(0,40)}…`);
+        printToWorkingArea(`  Step15: base4 string treated as decimal → base9: ${s.step15.base9.slice(0,40)}…`);
+        printToWorkingArea(`  Step16: base9 string treated as decimal → hex: ${s.step16.finalHex}`);
+        printToWorkingArea(`  >>> FINAL PIECE: ${s.step16.finalHex}`);
+      });
 
-      // Build a nice console table of the key intermediate results
-      if (data.steps && data.steps.length > 0) {
-        const rows = data.steps.map(s => ({
-          Char: s.character,
-          '1st3': s.first3,
-          'mid2': s.next2,
-          'last4': s.last4,
-          'carry': s.step3.carry,
-          'scramble': s.step5.scrambleSum,
-          'step6q': s.step6.quotient,
-          'base5': s.step7.base5Str,
-          'weaved': s.step9.weaved,
-          'hex (step10)': s.step10.hex,
-          'wrapped': s.step11.wrapped,
-          'swapped': s.step12.swapped,
-          'base10 (s13)': s.step13.base10.slice(0, 20) + '…',
-          'base4 (s14)': s.step14.base4.slice(0, 20) + '…',
-          'base9 (s15)': s.step15.base9.slice(0, 20) + '…',
-          'FINAL HEX': s.step16.finalHex
-        }));
-        console.table(rows);
-      }
+      printToWorkingArea(`\n🔒 FULL ENCRYPTED OUTPUT:\n${data.result}`);
     } else if (endpoint === '/api/decrypt') {
-      // Decrypt endpoint (currently works with old 9-digit format)
       outputText.value = data.result;
-      console.log('✅ Decryption complete');
+      printToWorkingArea('✅ Decrypted (old method)');
     }
 
     setStatus('Success');
   } catch (err) {
-    console.error('❌ Request error:', err);
+    printToWorkingArea(`❌ Error: ${err.message}`);
     setStatus(`Error: ${err.message}`, true);
     outputText.value = '';
   }
 }
 
-// ---- Button listeners ----
 encryptBtn.addEventListener('click', () => {
   const text = inputText.value.trim();
-  if (!text) {
-    setStatus('Please enter some text', true);
-    return;
-  }
+  if (!text) { setStatus('Please enter some text', true); return; }
   callApi('/api/encrypt', { text });
 });
 
 decryptBtn.addEventListener('click', () => {
   const ciphertext = inputText.value.trim();
-  // This decrypt still only works with the old 9‑digit code format.
-  // For the new 16‑step encryption, decryption must be rebuilt later.
   if (!ciphertext || ciphertext.length % 9 !== 0) {
-    setStatus('Decrypt currently only works with 9‑digit codes. Update coming soon.', true);
+    setStatus('Old decrypt requires 9‑digit codes.', true);
     return;
   }
   callApi('/api/decrypt', { ciphertext });
