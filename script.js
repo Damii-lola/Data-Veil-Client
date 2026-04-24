@@ -1,4 +1,3 @@
-// CHANGE THIS TO YOUR ACTUAL RENDER URL
 const API_BASE = 'https://data-veil-api.onrender.com';
 
 const inputText = document.getElementById('inputText');
@@ -14,7 +13,6 @@ function setStatus(msg, isError = false) {
 
 async function callApi(endpoint, body) {
   setStatus('Contacting server...');
-
   console.log(`📤 Sending to ${API_BASE}${endpoint}:`, body);
 
   try {
@@ -43,19 +41,33 @@ async function callApi(endpoint, body) {
     if (endpoint === '/api/encrypt') {
       outputText.value = data.result;
 
-      // Step 2: Show table key and step‑by‑step breakdown in console
+      // Show table key
       console.log('🔑 Table Key:', data.tableKey);
       console.log(`✅ Encryption successful – ${data.steps.length} character(s)`);
-      console.table(data.steps.map(s => ({
+
+      // Build a console.table with full step‑by‑step details
+      const tableData = data.steps.map(s => ({
         Character: s.character,
-        '9‑Digit Code': s.code,
+        '9‑Digit': s.code,
         'First 3': s.first3,
         'Next 2': s.next2,
-        'Last 4': s.last4
-      })));
+        'Last 4': s.last4,
+        'Step3 a,b,c': `${s.step3.a},${s.step3.b},${s.step3.c}`,
+        'a+b': s.step3.sum_ab,
+        '(a+b)*c': s.step3.prod,
+        'b+c': s.step3.sum_bc,
+        'mod1 (prod % sum_bc)': s.step3.mod1,
+        'mod2 (sum_bc % prod)': s.step3.mod2,
+        'Carry (mod1+mod2)': s.step3.carry,
+        'Middle Value': s.step4.middle_value,
+        'Step4 Result (carry * middle)': s.step4.result
+      }));
+
+      console.table(tableData);
     } else {
-      // Decrypt – just shows the result in the output box
+      // Decrypt
       outputText.value = data.result;
+      console.log('✅ Decryption successful');
     }
 
     setStatus('Success');
