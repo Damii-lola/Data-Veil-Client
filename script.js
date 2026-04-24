@@ -1,4 +1,4 @@
-const API_BASE = 'https://data-veil-api.onrender.com';
+const API_BASE = 'https://data-veil-api.onrender.com'; // your Render URL
 
 const inputText = document.getElementById('inputText');
 const outputText = document.getElementById('outputText');
@@ -26,34 +26,38 @@ async function callApi(endpoint, body) {
     if (!res.ok) throw new Error(data.error || `Status ${res.status}`);
 
     if (endpoint === '/api/encrypt') {
-      outputText.value = data.result;
+      outputText.value = data.result;   // final hex after step 16
       console.log('🔑 Table Key:', data.tableKey);
-      console.log(`✅ Encrypted ${data.steps.length} character(s)`);
+      console.log(`✅ Encrypted ${data.charSteps.length} character(s)`);
 
-      // Show key steps in a clean table
-      const rows = data.steps.map(s => ({
+      // Show per‑character steps
+      console.table(data.charSteps.map(s => ({
         Char: s.character,
-        '9-digit': s.code,
         '1st3': s.first3,
         'mid2': s.next2,
         'last4': s.last4,
-        carry: s.step3.carry,
-        step4: s.step4.step4res,
-        scramble: s.step5.scrambleSum,
-        step6: s.step6.quotient,
-        base5: s.step7.base5Str,
-        sumBase5: s.step8.sumBase5,
-        chainFinal: s.step8.chainFinal,
-        weaved: s.step9.weaved,
-        hex10: s.step10.hex,
-        wrapped: s.step11.wrapped,
-        swapped: s.step12.swapped,
-        'step13 dec': s.step13.decimal,
-        'step14 base4': s.step14.base4,
-        'step15 base9': s.step15.base9,
-        'FINAL HEX': s.step16.finalHex
-      }));
-      console.table(rows);
+        'carry': s.step3.carry,
+        'step4': s.step4.step4res,
+        'scramble': s.step5.scrambleSum,
+        'step6': s.step6.quotient,
+        'base5': s.step7.base5Str,
+        'chainFinal': s.step8.chainFinal,
+        'weaved': s.step9.weaved,
+        'hex': s.step10.hex,
+        'wrapped': s.step11.wrapped,
+        'step12': s.step12.final
+      })));
+
+      // Show global steps 13‑16
+      console.log('🌐 Global Steps 13‑16');
+      const gs = data.globalSteps;
+      console.log('Concatenated Step12 Hex:', gs.concatHexAfter12);
+      console.table({
+        'Step13 – Base10': gs.step13.base10,
+        'Step14 – Base4': gs.step14.base4,
+        'Step15 – Base9': gs.step15.base9,
+        'Step16 – Final Hex': gs.step16.finalHex
+      });
     } else {
       outputText.value = data.result;
       console.log('✅ Decrypted');
