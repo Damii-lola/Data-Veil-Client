@@ -1,28 +1,30 @@
 body {
-  font-family: Arial, sans-serif;
-  background: #f0f4f8;
+  font-family: monospace;
+  background: #1e1e2f;
+  color: #e0e0e0;
   display: flex;
   justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  padding: 2rem;
   margin: 0;
 }
 .container {
-  background: white;
+  width: 100%;
+  max-width: 800px;
+  background: #2a2a3d;
   padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  width: 90%;
-  max-width: 600px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.5);
 }
 textarea {
   width: 100%;
   padding: 10px;
   margin: 8px 0;
-  border: 1px solid #ccc;
+  border: 1px solid #555;
   border-radius: 6px;
+  background: #1a1a2e;
+  color: #fff;
+  font-size: 14px;
   resize: vertical;
-  font-size: 16px;
 }
 .buttons {
   display: flex;
@@ -32,18 +34,25 @@ textarea {
 button {
   flex: 1;
   padding: 12px;
-  background: #2563eb;
+  background: #3b82f6;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 16px;
+  font-weight: bold;
 }
 button:hover {
-  background: #1d4ed8;
+  background: #2563eb;
+}
+button:disabled {
+  background: #555;
+  cursor: not-allowed;
 }
 #status {
   margin-top: 10px;
-  color: gray;
-  font-size: 14px;
+  color: #aaa;
+}
+.working-area h2 {
+  margin: 1rem 0 0.5rem;
+  color: #facc15;
 }
