@@ -2,19 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Custom Cipher – QR Output</title>
+  <title>VeilCipher – Transparent Encryption</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1>Custom Cipher</h1>
-    <textarea id="inputText" rows="4" placeholder="Type your message..."></textarea>
-    <button id="encryptBtn">Encrypt &amp; Generate QR</button>
-    <div id="outputArea">
-      <textarea id="outputText" rows="3" readonly placeholder="Encrypted hex will appear here..."></textarea>
-      <img id="qrImage" style="display:none; max-width:100%;" alt="QR Code">
-      <a id="downloadLink" style="display:none;" download="encrypted_qr.png">Download QR Image</a>
+    <header>
+      <h1>🔐 VeilCipher</h1>
+      <p class="subtitle">Custom 16‑Step Encryption with QR Output</p>
+    </header>
+
+    <div class="card input-card">
+      <textarea id="inputText" rows="4" placeholder="Type your message here..."></textarea>
+      <button id="encryptBtn">Encrypt & Generate QR</button>
     </div>
+
+    <div id="resultCard" class="card" style="display:none;">
+      <h2>📦 Final Encrypted Hex</h2>
+      <div class="hex-output" id="hexOutput"></div>
+      <button id="copyHexBtn" class="secondary-btn">📋 Copy Hex</button>
+
+      <div id="qrContainer" style="margin-top: 1rem;">
+        <img id="qrImage" style="display:none; max-width:100%; border-radius:8px;" alt="QR Code">
+        <a id="downloadLink" style="display:none;" class="download-btn" download="encrypted_qr.png">⬇ Download QR Image</a>
+      </div>
+    </div>
+
+    <div id="stepsCard" class="card" style="display:none;">
+      <h2>⚙️ Step‑by‑Step Breakdown</h2>
+      <div id="stepsContainer"></div>
+    </div>
+
     <p id="status"></p>
   </div>
   <script src="script.js"></script>
