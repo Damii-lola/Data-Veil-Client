@@ -56,3 +56,18 @@ button:disabled {
   margin: 1rem 0 0.5rem;
   color: #facc15;
 }
+#outputArea {
+  margin: 1rem 0;
+  text-align: center;
+}
+#qrImage {
+  border: 2px solid #fff;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+#downloadLink {
+  display: block;
+  color: #3b82f6;
+  text-decoration: underline;
+  cursor: pointer;
+}
