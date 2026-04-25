@@ -1,62 +1,136 @@
+:root {
+  --bg: #0f172a;
+  --card-bg: #1e293b;
+  --accent: #38bdf8;
+  --text: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --danger: #f87171;
+  --success: #4ade80;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-  font-family: monospace;
-  background: #1e1e2f;
-  color: #e0e0e0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
   display: flex;
   justify-content: center;
-  padding: 2rem;
-  margin: 0;
+  padding: 2rem 1rem;
+  min-height: 100vh;
 }
+
 .container {
   width: 100%;
-  max-width: 600px;
-  background: #2a2a3d;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+  max-width: 800px;
 }
+
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+header h1 {
+  font-size: 2.5rem;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
 textarea {
   width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border: 1px solid #555;
-  border-radius: 6px;
-  background: #1a1a2e;
+  padding: 1rem;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 10px;
   color: #fff;
-  font-size: 14px;
+  font-size: 1rem;
   resize: vertical;
+  font-family: 'JetBrains Mono', monospace;
 }
+
 button {
-  width: 100%;
-  padding: 12px;
-  background: #3b82f6;
-  color: white;
+  background: var(--accent);
+  color: #0f172a;
   border: none;
-  border-radius: 6px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  font-weight: bold;
-  margin: 10px 0;
+  transition: all 0.2s;
+  margin-top: 1rem;
+  width: 100%;
 }
-button:hover {
-  background: #2563eb;
+button:hover { filter: brightness(110%); transform: translateY(-1px); }
+.secondary-btn {
+  background: #334155;
+  color: #e2e8f0;
+  margin-top: 0.5rem;
 }
-#status {
-  margin-top: 10px;
-  color: #aaa;
-  text-align: center;
-}
-#outputArea {
-  text-align: center;
-}
-#qrImage {
-  border: 2px solid #fff;
+.download-btn {
+  display: inline-block;
+  background: #334155;
+  color: #e2e8f0;
+  padding: 8px 16px;
   border-radius: 8px;
+  text-decoration: none;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+.download-btn:hover { background: #475569; }
+
+.hex-output {
+  background: #0f172a;
+  padding: 1rem;
+  border-radius: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  word-break: break-all;
+  font-size: 0.9rem;
+  color: var(--accent);
+  border: 1px solid #334155;
   margin: 0.5rem 0;
 }
-#downloadLink {
-  display: block;
-  color: #3b82f6;
-  text-decoration: underline;
+
+#status {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-top: 1rem;
+}
+
+/* Step blocks */
+.step-block {
+  border-left: 3px solid var(--accent);
+  background: #0f172a;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.step-block h3 {
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
   cursor: pointer;
-  margin-top: 0.5rem;
+}
+.step-details {
+  margin-left: 1rem;
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.step-details span {
+  color: var(--accent);
+  font-weight: 600;
 }
