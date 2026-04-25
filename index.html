@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Custom Cipher – Debug View</title>
+  <title>Custom Cipher – QR Output</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -10,10 +10,15 @@
     <h1>Custom Cipher</h1>
     <textarea id="inputText" rows="4" placeholder="Paste your text here..."></textarea>
     <div class="buttons">
-      <button id="encryptBtn">Encrypt</button>
+      <button id="encryptBtn">Encrypt &amp; Generate QR</button>
       <button id="decryptBtn" disabled title="Decrypt not yet updated for new cipher">Decrypt (old)</button>
     </div>
-    <textarea id="outputText" rows="4" readonly placeholder="Final encrypted output..."></textarea>
+    <div id="outputArea">
+      <!-- QR code image and download button will appear here -->
+      <img id="qrImage" style="display:none; max-width:100%;" alt="QR Code">
+      <a id="downloadLink" style="display:none;" download="encrypted_qr.png">Download QR Image</a>
+      <textarea id="outputText" rows="2" readonly placeholder="Double‑encrypted hex will appear here..."></textarea>
+    </div>
     <div class="working-area">
       <h2>🔧 Working Area</h2>
       <textarea id="workingArea" rows="20" readonly placeholder="Step‑by‑step details will appear here..."></textarea>
