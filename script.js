@@ -6,20 +6,31 @@ const workingArea = document.getElementById('workingArea');
 const encryptBtn = document.getElementById('encryptBtn');
 const decryptBtn = document.getElementById('decryptBtn');
 const statusEl = document.getElementById('status');
+const qrImage = document.getElementById('qrImage');
+const downloadLink = document.getElementById('downloadLink');
 
 function setStatus(msg, isError = false) {
   statusEl.textContent = msg;
   statusEl.style.color = isError ? '#ff6b6b' : '#aaa';
 }
 
-// Display step details in the Working Area
 function printToWorkingArea(text) {
   workingArea.value += text + '\n';
   workingArea.scrollTop = workingArea.scrollHeight;
 }
 
+function displayQRCode(qrDataUrl) {
+  qrImage.src = qrDataUrl;
+  qrImage.style.display = 'block';
+  downloadLink.href = qrDataUrl;
+  downloadLink.style.display = 'block';
+}
+
 async function callApi(endpoint, body) {
-  workingArea.value = '';  // clear working area
+  workingArea.value = '';
+  outputText.value = '';
+  qrImage.style.display = 'none';
+  downloadLink.style.display = 'none';
   setStatus('Contacting server...');
   printToWorkingArea(`📤 Sending to ${API_BASE}${endpoint}: ${JSON.stringify(body)}`);
 
@@ -46,36 +57,34 @@ async function callApi(endpoint, body) {
       throw new Error(data.error || `Status ${res.status}`);
     }
 
-    // ---- Encryption success ----
     if (endpoint === '/api/encrypt') {
-      outputText.value = data.result;
-      printToWorkingArea(`🔑 Table Key: ${data.tableKey}`);
-      printToWorkingArea(`✅ Encryption complete – ${data.steps.length} character(s)\n`);
+      // Show double-encrypted hex in the textarea
+      outputText.value = data.doubleEncryptedHex;
 
-      // Print each character's step‑by‑step
-      data.steps.forEach((s, idx) => {
-        printToWorkingArea(`\n--- Character #${idx+1}: '${s.character}' ---`);
+      // Display QR code
+      if (data.qrCodeDataUrl) {
+        displayQRCode(data.qrCodeDataUrl);
+      }
+
+      // Print working steps for both passes
+      printToWorkingArea(`🔑 Table Key: ${data.tableKey}`);
+      printToWorkingArea(`\n=== FIRST PASS ===`);
+      printToWorkingArea(`Result: ${data.firstPassResult}`);
+      data.firstPassSteps.forEach((s, idx) => {
+        printToWorkingArea(`\n--- First Pass Char #${idx+1}: '${s.character}' ---`);
         printToWorkingArea(`  9‑Digit Code: ${s.code}`);
         printToWorkingArea(`  First 3: ${s.first3}   Next 2: ${s.next2}   Last 4: ${s.last4}`);
-        printToWorkingArea(`  Step3: a=${s.step3.a} b=${s.step3.b} c=${s.step3.c}   a+b=${s.step3.sum_ab}   (a+b)*c=${s.step3.prod}   a+b+c=${s.step3.sum_abc}`);
-        printToWorkingArea(`         prod%sum_abc=${s.step3.mod1}   sum_abc%prod=${s.step3.mod2}   carry=${s.step3.carry}`);
-        printToWorkingArea(`  Step4: carry * mid2 = ${s.step3.carry} * ${s.step4.midVal} = ${s.step4.step4res}`);
-        printToWorkingArea(`  Step5: Set1=[${s.step5.set1}] Set2=[${s.step5.set2}]  Diffs=[${s.step5.diffs}]  Sum=${s.step5.scrambleSum}`);
-        printToWorkingArea(`  Step6: ${s.step5.scrambleSum} ÷ ${s.step4.step4res} = ${s.step6.quotient} (drop decimal)`);
-        printToWorkingArea(`  Step7: base5(${s.step6.quotient})='${s.step7.base5Str}' → treat as decimal ${s.step7.base5AsDecimal} × ${s.first3} = ${s.step7.product}`);
-        printToWorkingArea(`  Step8: sumDigits(base5)=${s.step8.sumBase5} -> chain: divisor1=${s.step8.divisor1} mod1=${s.step8.mod1_8} div1_8=${s.step8.div1_8} mod2=${s.step8.mod2_8} div2_8=${s.step8.div2_8} divisor2=${s.step8.divisor2} mod3=${s.step8.mod3_8}  chainSum=${s.step8.chainSum} chainFinal=${s.step8.chainFinal}`);
-        printToWorkingArea(`  Step9: weave(start=${s.step8.divisor1}, ${s.step8.chainFinal}, ${s.step8.div2_8}) = ${s.step9.weaved}`);
-        printToWorkingArea(`  Step10: weaved→base5: ${s.step10.base5_2} → treat as dec→base7: ${s.step10.base7} → treat as dec→hex: ${s.step10.hex}`);
-        printToWorkingArea(`  Step11: sig=${s.step11.sig}   wrapped: ${s.step11.wrapped}`);
-        printToWorkingArea(`  Step12: first4=${s.step12.first4} last4=${s.step12.last4part}   swapped: ${s.step12.swapped}`);
-        printToWorkingArea(`  Step13: '0x${s.step12.swapped}' as hex → base10: ${s.step13.base10.slice(0,40)}…`);
-        printToWorkingArea(`  Step14: base10 → base4: ${s.step14.base4.slice(0,40)}…`);
-        printToWorkingArea(`  Step15: base4 string treated as decimal → base9: ${s.step15.base9.slice(0,40)}…`);
-        printToWorkingArea(`  Step16: base9 string treated as decimal → hex: ${s.step16.finalHex}`);
-        printToWorkingArea(`  >>> FINAL PIECE: ${s.step16.finalHex}`);
+        // ... You can optionally print all step details like before ...
+        printToWorkingArea(`  Step16 finalHex: ${s.step16.finalHex}`);
       });
 
-      printToWorkingArea(`\n🔒 FULL ENCRYPTED OUTPUT:\n${data.result}`);
+      printToWorkingArea(`\n=== SECOND PASS (on first pass hex) ===`);
+      printToWorkingArea(`Double‑encrypted result: ${data.doubleEncryptedHex}`);
+      data.secondPassSteps.forEach((s, idx) => {
+        printToWorkingArea(`\n--- Second Pass Char #${idx+1}: '${s.character}' ---`);
+        printToWorkingArea(`  9‑Digit Code: ${s.code}`);
+        printToWorkingArea(`  Step16 finalHex: ${s.step16.finalHex}`);
+      });
     } else if (endpoint === '/api/decrypt') {
       outputText.value = data.result;
       printToWorkingArea('✅ Decrypted (old method)');
@@ -85,7 +94,6 @@ async function callApi(endpoint, body) {
   } catch (err) {
     printToWorkingArea(`❌ Error: ${err.message}`);
     setStatus(`Error: ${err.message}`, true);
-    outputText.value = '';
   }
 }
 
