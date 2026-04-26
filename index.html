@@ -2,39 +2,127 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>VeilCipher – Transparent Encryption</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VeilCipher — 16-Step Encryption</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <canvas id="bgCanvas"></canvas>
+
+  <div class="scanline"></div>
+
   <div class="container">
-    <header>
-      <h1>🔐 VeilCipher</h1>
-      <p class="subtitle">Custom 16‑Step Encryption with QR Output</p>
+    <!-- HEADER -->
+    <header class="header">
+      <div class="logo-ring">
+        <svg viewBox="0 0 80 80" class="lock-svg">
+          <circle cx="40" cy="40" r="38" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4 3" class="spin-ring"/>
+          <circle cx="40" cy="40" r="30" fill="none" stroke="var(--accent2)" stroke-width="0.5" opacity="0.4"/>
+          <rect x="26" y="38" width="28" height="22" rx="3" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+          <path d="M32 38v-8a8 8 0 0116 0v8" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="40" cy="49" r="3" fill="var(--accent)"/>
+          <line x1="40" y1="52" x2="40" y2="56" stroke="var(--accent)" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1 class="title-main">VEIL<span class="title-accent">CIPHER</span></h1>
+        <p class="title-sub">16-STEP PROPRIETARY ENCRYPTION ENGINE</p>
+        <div class="header-badges">
+          <span class="badge">HEX OUTPUT</span>
+          <span class="badge">QR EXPORT</span>
+          <span class="badge">ONE-WAY</span>
+        </div>
+      </div>
     </header>
 
-    <div class="card input-card">
-      <textarea id="inputText" rows="4" placeholder="Type your message here..."></textarea>
-      <button id="encryptBtn">Encrypt & Generate QR</button>
+    <!-- STATUS BAR -->
+    <div class="status-bar" id="statusBar">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">SYSTEM READY — AWAITING INPUT</span>
     </div>
 
-    <div id="resultCard" class="card" style="display:none;">
-      <h2>📦 Final Encrypted Hex</h2>
-      <div class="hex-output" id="hexOutput"></div>
-      <button id="copyHexBtn" class="secondary-btn">📋 Copy Hex</button>
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+      <!-- INPUT PANEL -->
+      <div class="panel input-panel" id="inputPanel">
+        <div class="panel-label">INPUT CHANNEL</div>
+        <div class="textarea-wrapper">
+          <textarea id="inputText" spellcheck="false" placeholder="Type plaintext message here...&#10;&#10;Every character becomes a unique hex fingerprint."></textarea>
+          <div class="char-count"><span id="charCount">0</span> CHARS</div>
+        </div>
+        <button id="encryptBtn" class="encrypt-btn">
+          <span class="btn-inner">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            <span id="btnText">ENCRYPT &amp; GENERATE QR</span>
+          </span>
+          <span class="btn-glow"></span>
+        </button>
+      </div>
 
-      <div id="qrContainer" style="margin-top: 1rem;">
-        <img id="qrImage" style="display:none; max-width:100%; border-radius:8px;" alt="QR Code">
-        <a id="downloadLink" style="display:none;" class="download-btn" download="encrypted_qr.png">⬇ Download QR Image</a>
+      <!-- OUTPUT PANEL -->
+      <div class="panel output-panel" id="outputPanel" style="display:none;">
+        <div class="panel-label">ENCRYPTED OUTPUT</div>
+        <div class="hex-stream" id="hexOutput"></div>
+        <div class="output-actions">
+          <button id="copyHexBtn" class="action-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            COPY HEX
+          </button>
+          <a id="downloadLink" class="action-btn" style="display:none;" download="veilcipher_qr.png">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            DOWNLOAD QR
+          </a>
+        </div>
       </div>
     </div>
 
-    <div id="stepsCard" class="card" style="display:none;">
-      <h2>⚙️ Step‑by‑Step Breakdown</h2>
-      <div id="stepsContainer"></div>
+    <!-- QR SECTION -->
+    <div class="qr-section" id="qrSection" style="display:none;">
+      <div class="panel qr-panel">
+        <div class="panel-label">QR ARTIFACT</div>
+        <div class="qr-frame">
+          <div class="qr-corner tl"></div>
+          <div class="qr-corner tr"></div>
+          <div class="qr-corner bl"></div>
+          <div class="qr-corner br"></div>
+          <img id="qrImage" alt="QR Code">
+        </div>
+        <p class="qr-caption">Scan to reveal the cipher string</p>
+      </div>
+
+      <div class="panel stats-panel">
+        <div class="panel-label">CIPHER STATS</div>
+        <div class="stats-grid" id="statsGrid"></div>
+      </div>
     </div>
 
-    <p id="status"></p>
+    <!-- STEPS SECTION -->
+    <div id="stepsSection" style="display:none;">
+      <div class="steps-header">
+        <div class="panel-label">STEP-BY-STEP DECONSTRUCTION</div>
+        <button class="toggle-all-btn" id="toggleAllBtn">EXPAND ALL</button>
+      </div>
+      <div class="steps-scroll" id="stepsContainer"></div>
+    </div>
   </div>
+
+  <!-- LOADING OVERLAY -->
+  <div class="loading-overlay" id="loadingOverlay" style="display:none;">
+    <div class="loading-content">
+      <div class="cipher-spinner">
+        <div class="spinner-ring r1"></div>
+        <div class="spinner-ring r2"></div>
+        <div class="spinner-ring r3"></div>
+        <div class="spinner-icon">⚙</div>
+      </div>
+      <div class="loading-text" id="loadingText">INITIALIZING</div>
+      <div class="loading-sub" id="loadingSub">Connecting to cipher engine...</div>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
