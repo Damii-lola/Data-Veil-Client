@@ -6,543 +6,416 @@
   <title>VeilCipher — 16-Step Encryption</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <canvas id="bgCanvas"></canvas>
-  <div class="scanline"></div>
+  <div class="noise-overlay"></div>
+  <div class="scanlines"></div>
 
-  <!-- ── NAVBAR ── -->
+  <!-- CURSOR -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAVBAR -->
   <nav class="navbar" id="navbar">
     <div class="nav-inner">
       <a class="nav-logo" href="#hero">
-        <svg viewBox="0 0 32 32" width="20" height="20" style="flex-shrink:0">
-          <circle cx="16" cy="16" r="14" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3 2" class="spin-ring"/>
-          <rect x="10" y="15" width="12" height="9" rx="1.5" fill="none" stroke="var(--accent)" stroke-width="1.3"/>
-          <path d="M13 15v-3a3 3 0 016 0v3" fill="none" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round"/>
-          <circle cx="16" cy="19.5" r="1.3" fill="var(--accent)"/>
-        </svg>
-        <span class="nav-brand">VEIL<span>CIPHER</span></span>
+        <div class="logo-mark">
+          <svg viewBox="0 0 36 36" width="36" height="36">
+            <circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" stroke-width="0.75" stroke-dasharray="3 2" class="spin-slow"/>
+            <circle cx="18" cy="18" r="10" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.4"/>
+            <rect x="12" y="17" width="12" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/>
+            <path d="M15 17v-3.5a3 3 0 016 0V17" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            <circle cx="18" cy="21.5" r="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <span class="nav-brand">VEIL<em>CIPHER</em></span>
       </a>
       <div class="nav-links">
-        <a class="nav-link" href="#encrypt">ENCRYPT</a>
-        <a class="nav-link" href="#about">ABOUT</a>
-        <a class="nav-link" href="#algorithm">ALGORITHM</a>
-        <a class="nav-link" href="#architecture">ARCHITECTURE</a>
+        <a class="nav-link" href="#encrypt" data-section="encrypt">ENCRYPT</a>
+        <a class="nav-link" href="#about" data-section="about">ABOUT</a>
+        <a class="nav-link" href="#algorithm" data-section="algorithm">ALGORITHM</a>
+        <a class="nav-link" href="#architecture" data-section="architecture">SYSTEM</a>
       </div>
-      <button class="nav-hamburger" id="navHamburger" onclick="toggleMenu()">
+      <button class="nav-cta" onclick="scrollToEncrypt()">TRY IT FREE</button>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
         <span></span><span></span><span></span>
       </button>
     </div>
-    <div class="nav-mobile" id="navMobile">
-      <a class="nav-link" href="#encrypt"      onclick="toggleMenu()">ENCRYPT</a>
-      <a class="nav-link" href="#about"        onclick="toggleMenu()">ABOUT</a>
-      <a class="nav-link" href="#algorithm"    onclick="toggleMenu()">ALGORITHM</a>
-      <a class="nav-link" href="#architecture" onclick="toggleMenu()">ARCHITECTURE</a>
+    <div class="mobile-menu" id="mobileMenu">
+      <a class="nav-link" href="#encrypt" onclick="toggleMobileMenu()">ENCRYPT</a>
+      <a class="nav-link" href="#about" onclick="toggleMobileMenu()">ABOUT</a>
+      <a class="nav-link" href="#algorithm" onclick="toggleMobileMenu()">ALGORITHM</a>
+      <a class="nav-link" href="#architecture" onclick="toggleMobileMenu()">SYSTEM</a>
     </div>
   </nav>
 
-  <!-- ════════════════════════════════════════
-       SECTION 1 — HERO
-  ════════════════════════════════════════ -->
+  <!-- HERO -->
   <section id="hero" class="section hero-section">
+    <div class="hero-bg-rings">
+      <div class="ring r1"></div>
+      <div class="ring r2"></div>
+      <div class="ring r3"></div>
+    </div>
     <div class="container hero-inner">
-      <div class="hero-lock">
-        <svg viewBox="0 0 90 90" width="90" height="90">
-          <circle cx="45" cy="45" r="43" fill="none" stroke="var(--accent)" stroke-width="0.8" stroke-dasharray="4 3" class="spin-ring"/>
-          <circle cx="45" cy="45" r="33" fill="none" stroke="var(--accent2)" stroke-width="0.5" opacity="0.35"/>
-          <rect x="28" y="43" width="29" height="23" rx="3" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
-          <path d="M34 43v-9a11 11 0 0122 0v9" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/>
-          <circle cx="45" cy="54" r="3.2" fill="var(--accent)"/>
-          <line x1="45" y1="57" x2="45" y2="62" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
-        </svg>
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        PROPRIETARY CRYPTOGRAPHY ENGINE · LIVE
       </div>
-      <div class="hero-eyebrow">PROPRIETARY CRYPTOGRAPHY ENGINE</div>
-      <h1 class="hero-title">VEIL<span>CIPHER</span></h1>
-      <p class="hero-desc">Transform any text into a unique hexadecimal fingerprint using a custom 16-step character-by-character algorithm. Every encryption is backed by a secret database mapping — no two outputs are alike.</p>
-      <div class="hero-tags">
-        <span class="tag">HEX OUTPUT</span>
-        <span class="tag">QR CODE</span>
-        <span class="tag">ONE-WAY HASH</span>
-        <span class="tag">16 STEPS</span>
-        <span class="tag tag-dim">SERVERLESS</span>
+      <h1 class="hero-title">
+        <span class="title-veil">VEIL</span><span class="title-cipher">CIPHER</span>
+      </h1>
+      <div class="hero-ticker" id="heroTicker">
+        <span class="ticker-label">LIVE OUTPUT →</span>
+        <span class="ticker-text" id="tickerText">A9F3C7B2E1D4F608...</span>
       </div>
-      <a href="#encrypt" class="hero-cta">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        START ENCRYPTING
-      </a>
-      <div class="scroll-hint">
-        <span class="scroll-arrow">↓</span>
-        <span class="scroll-text">SCROLL TO EXPLORE</span>
+      <p class="hero-desc">Transform any text into an unbreakable hexadecimal fingerprint. 16-step character-by-character algorithm. Secret database mapping. Every encryption — utterly unique.</p>
+      <div class="hero-stats">
+        <div class="hstat"><span class="hstat-n">16</span><span class="hstat-l">STEPS</span></div>
+        <div class="hstat-div"></div>
+        <div class="hstat"><span class="hstat-n">9</span><span class="hstat-l">DIGIT CODES</span></div>
+        <div class="hstat-div"></div>
+        <div class="hstat"><span class="hstat-n">∞</span><span class="hstat-l">UNIQUE OUTPUTS</span></div>
       </div>
+      <div class="hero-actions">
+        <a href="#encrypt" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          START ENCRYPTING
+        </a>
+        <a href="#algorithm" class="btn-ghost">SEE THE ALGORITHM →</a>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <div class="scroll-line"></div>
+      <span>SCROLL</span>
     </div>
   </section>
 
-  <!-- ════════════════════════════════════════
-       SECTION 2 — ENCRYPT TOOL
-  ════════════════════════════════════════ -->
-  <section id="encrypt" class="section">
+  <!-- MARQUEE -->
+  <div class="marquee-strip">
+    <div class="marquee-inner" id="marqueeInner">
+      <span>ENCRYPT</span><span class="dot">·</span>
+      <span>16 STEPS</span><span class="dot">·</span>
+      <span>HEX OUTPUT</span><span class="dot">·</span>
+      <span>QR CODE</span><span class="dot">·</span>
+      <span>ONE-WAY HASH</span><span class="dot">·</span>
+      <span>SERVERLESS</span><span class="dot">·</span>
+      <span>SUPABASE</span><span class="dot">·</span>
+      <span>NODE.JS</span><span class="dot">·</span>
+      <span>RENDER</span><span class="dot">·</span>
+      <span>VEILCIPHER</span><span class="dot">·</span>
+      <span>ENCRYPT</span><span class="dot">·</span>
+      <span>16 STEPS</span><span class="dot">·</span>
+      <span>HEX OUTPUT</span><span class="dot">·</span>
+      <span>QR CODE</span><span class="dot">·</span>
+      <span>ONE-WAY HASH</span><span class="dot">·</span>
+      <span>SERVERLESS</span><span class="dot">·</span>
+      <span>SUPABASE</span><span class="dot">·</span>
+      <span>NODE.JS</span><span class="dot">·</span>
+      <span>RENDER</span><span class="dot">·</span>
+      <span>VEILCIPHER</span><span class="dot">·</span>
+    </div>
+  </div>
+
+  <!-- ENCRYPT SECTION -->
+  <section id="encrypt" class="section encrypt-section">
     <div class="container">
-      <div class="section-header">
-        <div class="section-eyebrow">LIVE TOOL</div>
-        <h2 class="section-title">Encrypt Your Message</h2>
-        <p class="section-lead">Type any text below — letters, numbers, symbols, spaces — and run it through the 16-step engine. Every character gets its own hex fingerprint, concatenated into one final output string.</p>
+      <div class="section-label">LIVE TOOL · ENCRYPT NOW</div>
+      <h2 class="section-title">Run the Engine</h2>
+
+      <div class="status-ribbon" id="statusRibbon">
+        <div class="status-pulse" id="statusPulse"></div>
+        <span class="status-msg" id="statusMsg">CIPHER ENGINE READY — AWAITING INPUT</span>
+        <div class="status-time" id="statusTime"></div>
       </div>
 
-      <div class="status-bar" id="statusBar">
-        <span class="status-dot" id="statusDot"></span>
-        <span id="statusText">SYSTEM READY — AWAITING INPUT</span>
-      </div>
-
-      <div class="main-grid">
-        <div class="panel">
-          <div class="panel-label">INPUT CHANNEL</div>
-          <div class="textarea-wrapper">
-            <textarea id="inputText" spellcheck="false" placeholder="Type plaintext message here...&#10;&#10;Every character becomes a unique hex fingerprint.&#10;Ctrl+Enter to encrypt."></textarea>
-            <div class="char-count"><span id="charCount">0</span> CHARS</div>
+      <div class="encrypt-grid">
+        <!-- INPUT -->
+        <div class="enc-panel input-panel">
+          <div class="enc-panel-header">
+            <span class="enc-panel-tag">INPUT CHANNEL</span>
+            <span class="char-count-display"><span id="charCount">0</span> CHARS</span>
+          </div>
+          <div class="textarea-zone">
+            <textarea
+              id="inputText"
+              spellcheck="false"
+              placeholder="Enter your message here...&#10;&#10;Letters, numbers, symbols, spaces.&#10;Every character becomes a unique hex fingerprint.&#10;&#10;Press Ctrl+Enter to encrypt."
+            ></textarea>
+            <div class="textarea-glow"></div>
           </div>
           <button id="encryptBtn" class="encrypt-btn">
-            <span class="btn-inner">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-              <span id="btnText">ENCRYPT &amp; GENERATE QR</span>
+            <span class="encrypt-btn-bg"></span>
+            <span class="encrypt-btn-content">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              <span id="btnLabel">ENCRYPT &amp; GENERATE QR</span>
             </span>
-            <span class="btn-glow"></span>
+            <span class="encrypt-btn-particles" id="btnParticles"></span>
           </button>
         </div>
 
-        <div class="panel" id="outputPanel" style="display:none;">
-          <div class="panel-label">ENCRYPTED OUTPUT</div>
-          <div class="hex-stream" id="hexOutput"></div>
-          <div class="output-actions">
-            <button id="copyHexBtn" class="action-btn">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-              COPY HEX
-            </button>
-            <a id="downloadLink" class="action-btn" style="display:none;" download="veilcipher_qr.png">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              DOWNLOAD QR
-            </a>
+        <!-- OUTPUT -->
+        <div class="enc-panel output-panel" id="outputPanel" style="opacity:0;pointer-events:none;">
+          <div class="enc-panel-header">
+            <span class="enc-panel-tag">ENCRYPTED OUTPUT</span>
+            <button id="copyHexBtn" class="mini-btn">COPY HEX</button>
           </div>
+          <div class="hex-display" id="hexDisplay">
+            <div class="hex-stream" id="hexStream"></div>
+          </div>
+          <div class="hex-meta" id="hexMeta"></div>
         </div>
       </div>
 
-      <!-- QR + Stats -->
-      <div class="qr-section" id="qrSection" style="display:none;">
-        <div class="panel qr-panel">
-          <div class="panel-label">QR ARTIFACT</div>
-          <div class="qr-frame">
-            <div class="qr-corner tl"></div><div class="qr-corner tr"></div>
-            <div class="qr-corner bl"></div><div class="qr-corner br"></div>
-            <img id="qrImage" alt="QR Code">
+      <!-- QR + STATS ROW -->
+      <div class="results-row" id="resultsRow" style="display:none">
+        <div class="qr-card">
+          <div class="qr-card-label">QR ARTIFACT</div>
+          <div class="qr-wrapper">
+            <div class="qr-corner-tl"></div><div class="qr-corner-tr"></div>
+            <div class="qr-corner-bl"></div><div class="qr-corner-br"></div>
+            <div class="qr-scan-line" id="qrScanLine"></div>
+            <img id="qrImg" alt="Encrypted QR Code">
           </div>
-          <p class="qr-caption">Scan to reveal the cipher string</p>
+          <a id="dlQR" class="mini-btn" download="veilcipher_qr.png" style="display:none">↓ DOWNLOAD QR</a>
         </div>
-        <div class="panel">
-          <div class="panel-label">CIPHER STATS</div>
+        <div class="stats-card">
+          <div class="stats-card-label">CIPHER METRICS</div>
           <div class="stats-grid" id="statsGrid"></div>
         </div>
+        <div class="entropy-card">
+          <div class="entropy-label">HEX ENTROPY</div>
+          <div class="entropy-visual" id="entropyVisual"></div>
+          <div class="entropy-score" id="entropyScore">–</div>
+        </div>
       </div>
 
-      <!-- Steps breakdown -->
-      <div id="stepsSection" style="display:none;">
-        <div class="steps-header">
-          <div class="panel-label" style="margin:0">STEP-BY-STEP DECONSTRUCTION</div>
-          <button class="toggle-all-btn" id="toggleAllBtn">EXPAND ALL</button>
+      <!-- STEPS -->
+      <div id="stepsZone" style="display:none">
+        <div class="steps-toolbar">
+          <span class="steps-toolbar-label">STEP-BY-STEP DECONSTRUCTION</span>
+          <div class="steps-toolbar-right">
+            <button class="mini-btn" id="expandAllBtn">EXPAND ALL</button>
+          </div>
         </div>
         <div id="stepsContainer"></div>
       </div>
     </div>
   </section>
 
-  <!-- ════════════════════════════════════════
-       SECTION 3 — ABOUT
-  ════════════════════════════════════════ -->
-  <section id="about" class="section section-alt">
+  <!-- ABOUT SECTION -->
+  <section id="about" class="section about-section">
+    <div class="section-bg-text">CIPHER</div>
     <div class="container">
-      <div class="section-header">
-        <div class="section-eyebrow">DOCUMENTATION · OVERVIEW</div>
-        <h2 class="section-title">What is VeilCipher?</h2>
-        <p class="section-lead">A completely custom character-by-character encryption system that turns any text into a unique hexadecimal string and packages it into a downloadable QR code — all powered by a proprietary 16-step algorithm tied to a secret database of character mappings.</p>
-      </div>
+      <div class="section-label">DOCUMENTATION · OVERVIEW</div>
+      <h2 class="section-title">What is VeilCipher?</h2>
+      <p class="section-sub">A completely custom character-by-character encryption system that turns any text into a unique hexadecimal string and packages it into a downloadable QR code — all powered by a proprietary 16-step algorithm tied to a secret database of character mappings.</p>
 
-      <div class="blog-grid">
-        <article class="blog-card fade-in">
-          <div class="blog-card-icon">🔐</div>
+      <div class="about-grid">
+        <div class="about-card large-card">
+          <div class="about-card-num">01</div>
           <h3>A Custom Encryption Engine</h3>
-          <p>VeilCipher is a <strong>single-page web application</strong> that encrypts text using a proprietary 16-step algorithm tied to a secret database of character mappings. The final result is a hexadecimal string and a QR code containing that string.</p>
+          <p>VeilCipher is a single-page web application that encrypts text using a proprietary 16-step algorithm tied to a secret database of character mappings. The final result is a hexadecimal string and a QR code containing that string.</p>
           <p>The entire application is serverless on the frontend and relies on a Node.js backend deployed on Render, which fetches its mapping data from a Supabase PostgreSQL database.</p>
-        </article>
+          <div class="card-accent-bar"></div>
+        </div>
 
-        <article class="blog-card fade-in">
-          <div class="blog-card-icon">⚡</div>
+        <div class="about-card">
+          <div class="about-card-num">02</div>
           <h3>High-Level Flow</h3>
-          <ol class="blog-list">
-            <li>User types a message (e.g. <code>Hello</code>)</li>
-            <li>Clicks <strong>Encrypt &amp; Generate QR</strong></li>
-            <li>Frontend sends the text to the backend API</li>
-            <li>Backend encrypts each character individually using the secret mapping table from Supabase, then concatenates the results</li>
-            <li>The final encrypted string is returned along with every intermediate calculation</li>
-            <li>Frontend displays the hex, a QR code, and an expandable step-by-step breakdown per character</li>
+          <ol class="flow-list">
+            <li><span>User types a message</span></li>
+            <li><span>Clicks Encrypt &amp; Generate QR</span></li>
+            <li><span>Frontend sends text to backend API</span></li>
+            <li><span>Backend encrypts each character using the secret mapping</span></li>
+            <li><span>Final encrypted string returned with step data</span></li>
+            <li><span>Frontend displays hex, QR, and step breakdown</span></li>
           </ol>
-        </article>
+        </div>
 
-        <article class="blog-card blog-card-wide fade-in">
-          <div class="blog-card-icon">🗄️</div>
-          <h3>The Database — Character Mapping Tables</h3>
-          <p>The encryption relies on two Supabase tables that together form the <em>secret key</em> of the cipher. Without them, nobody can reproduce the encryption.</p>
-          <div class="db-tables">
-            <div class="db-table">
-              <div class="db-table-name">cipher_tables</div>
-              <div class="db-field"><span class="db-col">id</span>Auto-increment primary key</div>
-              <div class="db-field"><span class="db-col">table_key</span>Random 4-digit number (1000–9999) identifying the full mapping set</div>
-              <div class="db-field"><span class="db-col">created_at</span>Timestamp of creation</div>
-            </div>
-            <div class="db-table">
-              <div class="db-table-name">character_mappings</div>
-              <div class="db-field"><span class="db-col">character</span>Single printable ASCII character (codes 32–126)</div>
-              <div class="db-field"><span class="db-col">mapped_code</span>Random unique 9-digit string — digits 1–9 only, no zeros</div>
-              <div class="db-field"><span class="db-col">table_id</span>Foreign key → cipher_tables.id</div>
-            </div>
-          </div>
-          <p class="blog-note">The 9-digit codes are random, unique per table, and never exposed via any API endpoint. This random mapping is the secret key of the cipher.</p>
-        </article>
-
-        <article class="blog-card fade-in">
-          <div class="blog-card-icon">🔁</div>
+        <div class="about-card">
+          <div class="about-card-num">03</div>
           <h3>Why Is It One-Way?</h3>
-          <p>Several steps lose information irreversibly, making reversal impossible. VeilCipher is essentially a <strong>custom cryptographic hash</strong> rather than a reversible encryption scheme.</p>
-          <ul class="blog-list">
-            <li><strong>Step 6</strong> — Integer division drops the remainder permanently</li>
-            <li><strong>Step 8</strong> — Modulo and division chains discard original numbers; only derived values survive</li>
-            <li><strong>Step 5</strong> — Scramble sums absolute differences — many different 4-digit sets can produce the same sum</li>
-          </ul>
-        </article>
+          <p>Several steps lose information irreversibly:</p>
+          <div class="loss-items">
+            <div class="loss-item">
+              <span class="loss-step">STEP 6</span>
+              <span>Integer division drops the remainder permanently</span>
+            </div>
+            <div class="loss-item">
+              <span class="loss-step">STEP 8</span>
+              <span>Modulo chains discard original numbers</span>
+            </div>
+            <div class="loss-item">
+              <span class="loss-step">STEP 5</span>
+              <span>Scramble sums absolute differences — many inputs → same sum</span>
+            </div>
+          </div>
+        </div>
 
-        <article class="blog-card fade-in">
-          <div class="blog-card-icon">📱</div>
-          <h3>QR Code Generation</h3>
-          <p>After the final hex is assembled, the backend uses the <code>qrcode</code> npm library to generate a PNG image of a QR code containing that hex string.</p>
-          <p>The image is returned as a <strong>base64 data URL</strong> so the frontend displays it instantly without a separate file request. A download link lets you save the QR as <code>veilcipher_qr.png</code>.</p>
-        </article>
-
-        <article class="blog-card fade-in">
-          <div class="blog-card-icon">🚀</div>
-          <h3>How to Use It</h3>
-          <ol class="blog-list">
-            <li>Scroll up to the <strong>Encrypt</strong> section</li>
-            <li>Type any text — letters, numbers, symbols, spaces</li>
-            <li>Click <strong>Encrypt &amp; Generate QR</strong> (or press Ctrl+Enter)</li>
-            <li>The hex appears; the QR code is generated instantly</li>
-            <li>Expand any character's step block to see the exact math</li>
-            <li>Copy the hex or download the QR image for later use</li>
-          </ol>
-          <p class="blog-note">The system works fully in the cloud — no local setup needed. The mapping table in Supabase can be regenerated at any time to produce a completely different cipher.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- ════════════════════════════════════════
-       SECTION 4 — ALGORITHM
-  ════════════════════════════════════════ -->
-  <section id="algorithm" class="section">
-    <div class="container">
-      <div class="section-header">
-        <div class="section-eyebrow">DOCUMENTATION · DEEP DIVE</div>
-        <h2 class="section-title">The 16-Step Algorithm</h2>
-        <p class="section-lead">Every single character of the input text undergoes the exact same sequence of 16 mathematical transformations. The output of each character's journey is concatenated to produce the final encrypted hex string.</p>
-      </div>
-
-      <div class="panel algo-intro fade-in">
-        <div class="panel-label">WORKED EXAMPLE</div>
-        <p>All steps below use character <code>A</code> with 9-digit code <code>517782813</code> and table key <code>9148</code> for illustration purposes.</p>
-      </div>
-
-      <div class="algo-steps">
-        <div class="algo-step fade-in">
-          <div class="algo-step-num">01</div>
-          <div class="algo-step-body">
-            <h3>Retrieve from Database</h3>
-            <p>Look up the character in <code>encryptMap</code> (loaded from Supabase at startup). Each printable ASCII character maps to a unique random 9-digit code containing only digits 1–9.</p>
-            <div class="algo-example">A → <span class="ex-val">517782813</span> &nbsp;|&nbsp; table_key = <span class="ex-val">9148</span></div>
+        <div class="about-card wide-card">
+          <div class="about-card-num">04</div>
+          <h3>The Database — Character Mapping Tables</h3>
+          <p>Two Supabase tables form the secret key. Without them, nobody can reproduce the encryption.</p>
+          <div class="db-schema">
+            <div class="db-table">
+              <div class="db-table-title">cipher_tables</div>
+              <div class="db-row"><code>id</code> Auto-increment primary key</div>
+              <div class="db-row"><code>table_key</code> Random 4-digit number (1000–9999)</div>
+              <div class="db-row"><code>created_at</code> Timestamp</div>
+            </div>
+            <div class="db-connector">→</div>
+            <div class="db-table">
+              <div class="db-table-title">character_mappings</div>
+              <div class="db-row"><code>character</code> Single printable ASCII char (32–126)</div>
+              <div class="db-row"><code>mapped_code</code> Random 9-digit string, digits 1–9 only</div>
+              <div class="db-row"><code>table_id</code> Foreign key → cipher_tables.id</div>
+            </div>
           </div>
-        </div>
-        <div class="algo-step fade-in">
-          <div class="algo-step-num">02</div>
-          <div class="algo-step-body">
-            <h3>Split the 9-Digit Code</h3>
-            <p>The code is divided into three segments that will each drive a different part of the calculation pipeline.</p>
-            <div class="algo-example"><span class="ex-label">First 3:</span> <span class="ex-val">517</span> &nbsp;|&nbsp; <span class="ex-label">Middle 2:</span> <span class="ex-val">78</span> &nbsp;|&nbsp; <span class="ex-label">Last 4:</span> <span class="ex-val">2813</span></div>
-          </div>
-        </div>
-        <div class="algo-step fade-in">
-          <div class="algo-step-num">03</div>
-          <div class="algo-step-body">
-            <h3>Math on the First 3 Digits</h3>
-            <p>Using digits a=5, b=1, c=7 from the first segment, a series of arithmetic and modulo operations produces a <strong>carry value</strong> that seeds the rest of the chain.</p>
-            <div class="algo-example">(a+b)×c = 6×7 = 42 &nbsp;|&nbsp; a+b+c = 13<br>mod1 = 42%13 = 3 &nbsp;|&nbsp; mod2 = 13%42 = 13<br><span class="ex-label">Carry =</span> <span class="ex-val">3 + 13 = 16</span></div>
-          </div>
-        </div>
-        <div class="algo-step fade-in">
-          <div class="algo-step-num">04</div>
-          <div class="algo-step-body">
-            <h3>Multiply with the Middle 2 Digits</h3>
-            <p>The carry value is multiplied by the middle 2-digit integer to amplify the number into a useful range.</p>
-            <div class="algo-example">carry × midVal = 16 × 78 = <span class="ex-val">1248</span></div>
-          </div>
-        </div>
-        <div class="algo-step fade-in">
-          <div class="algo-step-num">05</div>
-          <div class="algo-step-body">
-            <h3>Scramble the Last 4 Digits</h3>
-            <p>Two rotation sets are generated from the last 4 digits. Set1 rotates left 3 times; Set2 rotates right 3 times. Pairwise absolute differences are summed into a <strong>scramble sum</strong>.</p>
-            <div class="algo-example">last4 = 2813<br>Set1 (left rotations): [8132, 1328, 3281]<br>Set2 (right rotations): [3281, 1328, 8132]<br><span class="ex-label">Scramble Sum =</span> <span class="ex-val">Σ |Set1ᵢ - Set2ᵢ|</span></div>
-          </div>
-        </div>
-        <div class="algo-step fade-in">
-          <div class="algo-step-num">06</div>
-          <div class="algo-step-body">
-            <h3>Divide and Drop the Decimal</h3>
-            <p>Scramble sum divided by the Step 4 result. Only the integer part is kept — the remainder is permanently discarded. <em>This is one of the lossy steps that makes reversal impossible.</em></p>
-            <div class="algo-example">floor(scrambleSum ÷ step4result) = <span class="ex-val">quotient</span></div>
-          </div>
-        </div>
-        <div class="algo-step fade-in">
-          <div class="algo-step-num">07</div>
-          <div class="algo-step-body">
-            <h3>Base-5 Conversion → Decimal Reinterpretation → Multiply</h3>
-            <p>The Step 6 quotient is converted to base-5 notation, then that base-5 string is reinterpreted as a plain decimal number and multiplied by the original first-3 integer.</p>
-            <div class="algo-example">base5(quotient) = <span class="ex-val">'X'</span> → treat as decimal → × <span class="ex-val">517</span> = <span class="ex-val">product</span></div>
-          </div>
-        </div>
-        <div class="algo-step fade-in">
-          <div class="algo-step-num">08</div>
-          <div class="algo-step-body">
-            <h3>Chain of Calculations</h3>
-            <p>A chain of modulo and division operations uses two divisors — one from the digit-sum of the base-5 string, one from the digit-sum of the last 4 digits. The chain numbers are summed then multiplied to produce <strong>chainFinal</strong>.</p>
-            <div class="algo-example">digitSum(base5Str) → divisor1 &nbsp;|&nbsp; last4Sum → divisor2<br>chainNums = [divisor1, mod1, mod2, mod3]<br>chainFinal = sum(chainNums) × divisor1 = <span class="ex-val">chainFinal</span></div>
-          </div>
-        </div>
-        <div class="algo-step fade-in">
-          <div class="algo-step-num">09</div>
-          <div class="algo-step-body">
-            <h3>Weave Two Numbers Together</h3>
-            <p>A custom interleave function weaves digits from chainFinal and div2_8 together in a 1:3 ratio, prefixed by divisor1, producing an expanded numeric string.</p>
-            <div class="algo-example">weave(start=divisor1, chainFinal, div2_8) = <span class="ex-val">'weaved string'</span></div>
-          </div>
-        </div>
-        <div class="algo-step fade-in">
-          <div class="algo-step-num">10</div>
-          <div class="algo-step-body">
-            <h3>Triple Base Conversion</h3>
-            <p>The weaved string undergoes three successive base conversions using BigInt arithmetic to handle arbitrary precision throughout.</p>
-            <div class="algo-example">decimal → <span class="ex-label">base5</span> → treat as decimal → <span class="ex-label">base7</span> → treat as decimal → <span class="ex-val">HEX</span></div>
-          </div>
-        </div>
-        <div class="algo-step fade-in">
-          <div class="algo-step-num">11</div>
-          <div class="algo-step-body">
-            <h3>Wrap with Table Signature</h3>
-            <p>The table key is split into two 2-character halves which are prepended and appended to the hex string, embedding a unique table signature in the output.</p>
-            <div class="algo-example">sig = 9148 → last2=<span class="ex-val">48</span>, first2=<span class="ex-val">91</span><br>wrapped = <span class="ex-val">"48"</span> + hex + <span class="ex-val">"91"</span></div>
-          </div>
-        </div>
-        <div class="algo-step fade-in">
-          <div class="algo-step-num">12</div>
-          <div class="algo-step-body">
-            <h3>Swap First 4 and Last 4 Characters</h3>
-            <p>The first and last 4 characters of the wrapped string swap positions, with the middle section remaining intact — a final positional scramble.</p>
-            <div class="algo-example">"<span class="ex-val">AAAA</span>BBBBBB<span class="ex-val">CCCC</span>" → "<span class="ex-val">CCCC</span>BBBBBB<span class="ex-val">AAAA</span>"</div>
-          </div>
-        </div>
-        <div class="algo-step fade-in">
-          <div class="algo-step-num">13</div>
-          <div class="algo-step-body">
-            <h3>Read as Hex → Base 10</h3>
-            <p>The swapped string is interpreted as a hexadecimal number and converted to decimal. The result is typically a 30+ digit number, requiring BigInt throughout.</p>
-            <div class="algo-example">0xSWAPPED → <span class="ex-val">huge decimal</span> (30+ digits)</div>
-          </div>
-        </div>
-        <div class="algo-step fade-in">
-          <div class="algo-step-num">14</div>
-          <div class="algo-step-body">
-            <h3>Convert to Base 4</h3>
-            <p>That huge base-10 number is represented in base 4 (digits 0–3). The result is a very long string of 0s, 1s, 2s, and 3s.</p>
-            <div class="algo-example">huge decimal → <span class="ex-val">base4 string</span> (very long)</div>
-          </div>
-        </div>
-        <div class="algo-step fade-in">
-          <div class="algo-step-num">15</div>
-          <div class="algo-step-body">
-            <h3>Treat as Decimal → Base 9</h3>
-            <p>The base-4 string (which only contains digits 0–3, valid as decimal) is reinterpreted as a decimal number, then converted to base 9.</p>
-            <div class="algo-example">base4 string (as decimal) → <span class="ex-val">base9 string</span></div>
-          </div>
-        </div>
-        <div class="algo-step algo-step-final fade-in">
-          <div class="algo-step-num">16</div>
-          <div class="algo-step-body">
-            <h3>Final: Treat as Decimal → Hex</h3>
-            <p>The base-9 string is parsed as a decimal number and converted to <strong>hexadecimal</strong>. This is the final output for that character. Hex digits may include 0–9 and A–F.</p>
-            <div class="algo-example">base9 string (as decimal) → <span class="ex-val ex-final">FINAL HEX OUTPUT</span></div>
-            <p class="blog-note" style="margin-top:0.8rem;">The final encrypted string is the concatenation of per-character hex outputs across all input characters.</p>
-          </div>
+          <p class="footnote">The 9-digit codes are random, unique per table, and never exposed via any API endpoint.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ════════════════════════════════════════
-       SECTION 5 — ARCHITECTURE
-  ════════════════════════════════════════ -->
-  <section id="architecture" class="section section-alt">
+  <!-- ALGORITHM SECTION -->
+  <section id="algorithm" class="section algo-section">
     <div class="container">
-      <div class="section-header">
-        <div class="section-eyebrow">DOCUMENTATION · SYSTEM DESIGN</div>
-        <h2 class="section-title">Architecture</h2>
-        <p class="section-lead">VeilCipher is a three-tier serverless architecture spanning GitHub Pages, Render, and Supabase. Every component is cloud-hosted with zero local setup required.</p>
+      <div class="section-label">DOCUMENTATION · DEEP DIVE</div>
+      <h2 class="section-title">The 16-Step Algorithm</h2>
+      <p class="section-sub">Every character of the input undergoes the exact same sequence of 16 mathematical transformations. The output of each character's journey is concatenated to form the final encrypted string.</p>
+
+      <div class="algo-example-banner">
+        <span class="algo-ex-label">WORKED EXAMPLE</span>
+        All steps use character <code>A</code> with 9-digit code <code>517782813</code> and table key <code>9148</code>
       </div>
 
-      <!-- Topology diagram -->
-      <div class="panel arch-diagram fade-in">
-        <div class="panel-label">SYSTEM TOPOLOGY</div>
-        <div class="arch-flow">
-          <div class="arch-node arch-node-client">
-            <div class="arch-node-icon">🌐</div>
-            <div class="arch-node-title">FRONTEND</div>
-            <div class="arch-node-sub">HTML · CSS · JS</div>
-            <div class="arch-node-host">GitHub Pages</div>
+      <div class="algo-pipeline" id="algoPipeline">
+        <!-- Steps inserted by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE SECTION -->
+  <section id="architecture" class="section arch-section">
+    <div class="container">
+      <div class="section-label">DOCUMENTATION · SYSTEM DESIGN</div>
+      <h2 class="section-title">Architecture</h2>
+      <p class="section-sub">VeilCipher is a three-tier serverless architecture spanning GitHub Pages, Render, and Supabase. Every component is cloud-hosted with zero local setup required.</p>
+
+      <div class="arch-topology">
+        <div class="arch-node client-node">
+          <div class="arch-node-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
           </div>
-          <div class="arch-arrow">
-            <div class="arch-arrow-line"></div>
-            <div class="arch-arrow-label">POST /api/encrypt</div>
+          <div class="arch-node-title">FRONTEND</div>
+          <div class="arch-node-sub">HTML · CSS · Vanilla JS</div>
+          <div class="arch-node-host">GitHub Pages</div>
+          <div class="arch-node-details">
+            <div>Static SPA, no build step</div>
+            <div>Calls POST /api/encrypt</div>
+            <div>Base64 QR display</div>
           </div>
-          <div class="arch-node arch-node-api">
-            <div class="arch-node-icon">⚙️</div>
-            <div class="arch-node-title">BACKEND API</div>
-            <div class="arch-node-sub">Node.js · Express</div>
-            <div class="arch-node-host">Render</div>
+        </div>
+        <div class="arch-connector">
+          <div class="arch-conn-line">
+            <div class="arch-conn-arrow"></div>
           </div>
-          <div class="arch-arrow">
-            <div class="arch-arrow-line"></div>
-            <div class="arch-arrow-label">SELECT mappings</div>
+          <div class="arch-conn-label">POST /api/encrypt</div>
+        </div>
+        <div class="arch-node api-node">
+          <div class="arch-node-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
           </div>
-          <div class="arch-node arch-node-db">
-            <div class="arch-node-icon">🗄️</div>
-            <div class="arch-node-title">DATABASE</div>
-            <div class="arch-node-sub">PostgreSQL</div>
-            <div class="arch-node-host">Supabase</div>
+          <div class="arch-node-title">BACKEND API</div>
+          <div class="arch-node-sub">Node.js · Express</div>
+          <div class="arch-node-host">Render</div>
+          <div class="arch-node-details">
+            <div>16-step encryption engine</div>
+            <div>QR code generation</div>
+            <div>30-min cache refresh</div>
+          </div>
+        </div>
+        <div class="arch-connector">
+          <div class="arch-conn-line">
+            <div class="arch-conn-arrow"></div>
+          </div>
+          <div class="arch-conn-label">SELECT mappings</div>
+        </div>
+        <div class="arch-node db-node">
+          <div class="arch-node-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <div class="arch-node-title">DATABASE</div>
+          <div class="arch-node-sub">PostgreSQL</div>
+          <div class="arch-node-host">Supabase</div>
+          <div class="arch-node-details">
+            <div>Secret character mappings</div>
+            <div>9-digit codes per ASCII char</div>
+            <div>Regeneratable cipher key</div>
           </div>
         </div>
       </div>
 
-      <div class="blog-grid">
-        <article class="blog-card fade-in">
-          <div class="blog-card-icon">🌐</div>
-          <h3>Frontend — GitHub Pages</h3>
-          <p>A fully static single-page application with no build step and no framework. Pure HTML, CSS, and vanilla JavaScript served directly from the <code>cipher-client</code> GitHub repository.</p>
-          <ul class="blog-list">
-            <li>Calls <code>POST /api/encrypt</code> on the Render URL</li>
-            <li>Renders hex output with streaming character animation</li>
-            <li>Displays QR code as a base64 data URL — no extra requests</li>
-            <li>Shows expandable per-character step breakdowns</li>
-            <li>Deployed automatically on every GitHub push</li>
-          </ul>
-        </article>
+      <div class="deps-row">
+        <div class="section-label" style="margin-bottom:1.5rem">DEPENDENCIES</div>
+        <div class="deps-grid">
+          <div class="dep-card"><code>express</code><span>^4.18.2</span><em>HTTP server framework</em></div>
+          <div class="dep-card"><code>@supabase/supabase-js</code><span>^2.39.0</span><em>Database client</em></div>
+          <div class="dep-card"><code>cors</code><span>^2.8.5</span><em>Cross-origin headers</em></div>
+          <div class="dep-card"><code>qrcode</code><span>^1.5.3</span><em>QR PNG generation</em></div>
+        </div>
+      </div>
 
-        <article class="blog-card fade-in">
-          <div class="blog-card-icon">⚙️</div>
-          <h3>Backend — Render</h3>
-          <p>A lightweight Node.js + Express API server deployed on Render's web service tier. Handles all computation-heavy tasks server-side to keep the secret mappings private.</p>
-          <ul class="blog-list">
-            <li>Loads the cipher mapping from Supabase at startup</li>
-            <li>Refreshes the mapping cache every <strong>30 minutes</strong></li>
-            <li>Runs the 16-step encryption for every character</li>
-            <li>Generates the QR PNG using the <code>qrcode</code> npm package</li>
-            <li>Returns hex, QR data URL, and full step data as JSON</li>
-          </ul>
-        </article>
-
-        <article class="blog-card fade-in">
-          <div class="blog-card-icon">🗄️</div>
-          <h3>Database — Supabase</h3>
-          <p>A PostgreSQL database hosted on Supabase, holding the secret character mapping tables that form the cipher's key material.</p>
-          <ul class="blog-list">
-            <li><code>cipher_tables</code> — metadata and the 4-digit table key</li>
-            <li><code>character_mappings</code> — 9-digit code for every ASCII char 32–126</li>
-            <li>Backend connects via the Supabase JS client with a service key stored in environment variables</li>
-            <li>Regenerating the mapping produces an entirely different cipher</li>
-          </ul>
-        </article>
-
-        <article class="blog-card fade-in">
-          <div class="blog-card-icon">📦</div>
-          <h3>Dependencies</h3>
-          <div class="dep-list">
-            <div class="dep-item">
-              <span class="dep-name">express</span>
-              <span class="dep-ver">^4.18.2</span>
-              <span class="dep-desc">HTTP server framework</span>
-            </div>
-            <div class="dep-item">
-              <span class="dep-name">@supabase/supabase-js</span>
-              <span class="dep-ver">^2.39.0</span>
-              <span class="dep-desc">Database client</span>
-            </div>
-            <div class="dep-item">
-              <span class="dep-name">cors</span>
-              <span class="dep-ver">^2.8.5</span>
-              <span class="dep-desc">Cross-origin headers</span>
-            </div>
-            <div class="dep-item">
-              <span class="dep-name">qrcode</span>
-              <span class="dep-ver">^1.5.3</span>
-              <span class="dep-desc">QR PNG generation</span>
-            </div>
-          </div>
-        </article>
-
-        <article class="blog-card blog-card-wide fade-in">
-          <div class="blog-card-icon">🔒</div>
+      <div class="security-block">
+        <div class="security-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="security-content">
           <h3>Security Model</h3>
-          <p>The security of VeilCipher rests entirely on the secrecy of two values: the <strong>character mapping table</strong> in Supabase and the <strong>table key</strong>. Without these, the 16-step algorithm cannot be reproduced even with full knowledge of its structure.</p>
-          <p>The algorithm itself is documented on this site, but the specific 9-digit codes assigned to each character are secret, randomly generated per-table, and never exposed via any API endpoint. The backend only exposes the encrypted output and intermediate math — never the raw mapping.</p>
-          <p>The cipher is <strong>one-way by design</strong>. Multiple lossy steps — integer division, modulo chains, scramble sums — make reversal computationally infeasible.</p>
-        </article>
+          <p>The security of VeilCipher rests entirely on the secrecy of two values: the character mapping table in Supabase and the table key. Without these, the 16-step algorithm cannot be reproduced even with full knowledge of its structure. The algorithm itself is documented here, but the specific 9-digit codes assigned to each character are secret, randomly generated per-table, and never exposed via any API endpoint. The cipher is <strong>one-way by design</strong> — multiple lossy steps make reversal computationally infeasible.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ── FOOTER ── -->
+  <!-- FOOTER -->
   <footer class="footer">
     <div class="container footer-inner">
       <div class="footer-logo">
-        <svg viewBox="0 0 32 32" width="18" height="18">
-          <circle cx="16" cy="16" r="14" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3 2" class="spin-ring"/>
-          <rect x="10" y="15" width="12" height="9" rx="1.5" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
-          <path d="M13 15v-3a3 3 0 016 0v3" fill="none" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
-          <circle cx="16" cy="19.5" r="1.2" fill="var(--accent)"/>
+        <svg viewBox="0 0 32 32" width="22" height="22">
+          <circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="0.75" stroke-dasharray="3 2" class="spin-slow"/>
+          <rect x="10" y="15" width="12" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M13 15v-3a3 3 0 016 0v3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          <circle cx="16" cy="19.5" r="1.3" fill="currentColor"/>
         </svg>
         <span>VEILCIPHER</span>
       </div>
-      <p class="footer-text">Custom 16-step cryptographic hash engine · Serverless · One-way</p>
+      <p>Custom 16-step cryptographic hash engine · Serverless · One-way</p>
+      <p class="footer-copy">Built with Node.js · Supabase · Render · GitHub Pages</p>
     </div>
   </footer>
 
   <!-- LOADING OVERLAY -->
-  <div class="loading-overlay" id="loadingOverlay" style="display:none;">
-    <div class="loading-content">
-      <div class="cipher-spinner">
-        <div class="spinner-ring r1"></div>
-        <div class="spinner-ring r2"></div>
-        <div class="spinner-ring r3"></div>
-        <div class="spinner-icon">⚙</div>
+  <div class="loading-overlay" id="loadingOverlay" style="display:none">
+    <div class="loading-box">
+      <div class="loader-rings">
+        <div class="lr lr1"></div>
+        <div class="lr lr2"></div>
+        <div class="lr lr3"></div>
+        <div class="lr-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
       </div>
-      <div class="loading-text" id="loadingText">INITIALIZING</div>
-      <div class="loading-sub" id="loadingSub">Connecting to cipher engine...</div>
+      <div class="loader-stage" id="loaderStage">CONNECTING</div>
+      <div class="loader-detail" id="loaderDetail">Reaching cipher engine...</div>
+      <div class="loader-progress"><div class="loader-bar" id="loaderBar"></div></div>
     </div>
   </div>
+
+  <!-- TOAST -->
   <div class="toast" id="toast"></div>
 
   <script src="script.js"></script>
